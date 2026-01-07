@@ -1,7 +1,7 @@
 import { getSheetsClient } from './auth';
 
-// Hardcoded for production stability
-const SPREADSHEET_ID = "11NCa_DbttL6x4Fq_oHRFooweNfNPNPq6nIlPl7OUQVU";
+// Using environment variable for sheet ID
+const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
 
 export async function getSheetData(range: string) {
     const sheets = getSheetsClient();
@@ -70,4 +70,22 @@ export async function getResponses(logId?: string) {
         driveLink: row[5],
         finalRemark: row[6],
     })) || [];
+}
+
+// Dashboard Stats
+export async function getDashboardStats() {
+    const questions = await getQuestions();
+    const logs = await getInspectionLogs();
+
+    const totalQuestions = questions.length.toString();
+    const pendingInspections = logs.filter(l => l.status === 'PENDING' || l.status === 'प्रलंबित').length.toString();
+    const completedInspections = logs.filter(l => l.status === 'COMPLETED' || l.status === 'पूर्ण').length.toString();
+    const totalOfficers = [...new Set(logs.map(l => l.vroName))].length.toString();
+
+    return [
+        { label: 'एकूण प्रश्न', value: totalQuestions, icon: 'ClipboardList', color: 'text-blue-600', bg: 'bg-blue-100' },
+        { label: 'प्रलंबित तपासण्या', value: pendingInspections, icon: 'AlertCircle', color: 'text-amber-600', bg: 'bg-amber-100' },
+        { label: 'पूर्ण तपासण्या', value: completedInspections, icon: 'CheckCircle', color: 'text-emerald-600', bg: 'bg-emerald-100' },
+        { label: 'एकूण अधिकारी', value: totalOfficers, icon: 'Users', color: 'text-indigo-600', bg: 'bg-indigo-100' },
+    ];
 }

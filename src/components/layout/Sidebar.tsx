@@ -36,9 +36,9 @@ const menuItems = [
         path: '/inspection/new'
     },
     {
-        name: 'पूर्तता आणि अहवाल',
+        name: 'अहवाल',
         icon: CheckCircle2,
-        path: '/vro/compliance'
+        path: '/admin/reports'
     },
     {
         name: 'सेटिंग्ज',

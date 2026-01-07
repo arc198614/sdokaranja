@@ -4,15 +4,20 @@ import {
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
+import { getDashboardStats } from '@/lib/google/sheets';
 
-const stats = [
-  { label: 'एकूण प्रश्न', value: '१२४', icon: ClipboardList, color: 'text-blue-600', bg: 'bg-blue-100' },
-  { label: 'प्रलंबित तपासण्या', value: '१५', icon: AlertCircle, color: 'text-amber-600', bg: 'bg-amber-100' },
-  { label: 'पूर्ण तपासण्या', value: '८९', icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-100' },
-  { label: 'एकूण अधिकारी', value: '३२', icon: Users, color: 'text-indigo-600', bg: 'bg-indigo-100' },
-];
+export const dynamic = 'force-dynamic';
 
-export default function Home() {
+const IconMap = {
+  Users,
+  ClipboardList,
+  CheckCircle,
+  AlertCircle
+};
+
+export default async function Home() {
+  const stats = await getDashboardStats();
+
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       <div>
@@ -21,19 +26,23 @@ export default function Home() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => (
-          <div key={stat.label} className="premium-card p-6 flex items-center gap-4">
-            <div className={`p-4 rounded-xl ${stat.bg}`}>
-              <stat.icon className={stat.color} size={24} />
+        {stats.map((stat) => {
+          const Icon = IconMap[stat.icon as keyof typeof IconMap];
+          return (
+            <div key={stat.label} className="premium-card p-6 flex items-center gap-4">
+              <div className={`p-4 rounded-xl ${stat.bg}`}>
+                <Icon className={stat.color} size={24} />
+              </div>
+              <div>
+                <p className="text-gray-500 font-medium">{stat.label}</p>
+                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-gray-500 font-medium">{stat.label}</p>
-              <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
+      {/* Rest of the page remains the same for now, or can be made dynamic later */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="premium-card p-8">
           <h2 className="text-xl font-bold mb-6">अलीकडील क्रियाकलाप</h2>
@@ -42,8 +51,8 @@ export default function Home() {
               <div key={i} className="flex items-start gap-4 pb-6 border-b border-gray-100 last:border-0 last:pb-0">
                 <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 shrink-0" />
                 <div>
-                  <p className="font-semibold text-gray-800">नवीन तपासणी पूर्ण झाली - सजा करंज</p>
-                  <p className="text-sm text-gray-500 mt-1">तपासणी अधिकारी: श्री. पाटील | वेळ: २ तास पूर्वी</p>
+                  <p className="font-semibold text-gray-800">तपासणी प्रणाली अपडेट झाली</p>
+                  <p className="text-sm text-gray-500 mt-1">सर्व डेटा गुगल शीटमधून प्राप्त होत आहे.</p>
                 </div>
               </div>
             ))}

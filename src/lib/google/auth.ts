@@ -1,12 +1,11 @@
 import { google } from 'googleapis';
-import { CREDENTIALS } from './credentials_production';
 
 export const getGoogleAuth = () => {
-    const email = CREDENTIALS.client_email;
-    const privateKey = CREDENTIALS.private_key.replace(/\\n/g, '\n');
+    const email = process.env.GOOGLE_CLIENT_EMAIL;
+    const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
 
     if (!email || !privateKey) {
-        throw new Error('Google Service Account credentials are missing');
+        throw new Error('Google Service Account credentials are missing in Environment Variables');
     }
 
     const auth = new google.auth.GoogleAuth({
